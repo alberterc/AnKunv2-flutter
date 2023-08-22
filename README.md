@@ -1,16 +1,20 @@
-# ankunv2_flutter
+# AnKunv2 in Flutter
 
-A clone from AnkunV2 that was built using Jetpack Compose
+A clone of AnkunV2 with Flutter.
 
-## Getting Started
+Updated from [AnKunv2](https://github.com/RadXGH/AnKunv2) that was built using Jetpack Compose.
 
-This project is a starting point for a Flutter application.
+## Tech Stack
+- Flutter 3.10.6
+- Material App
+- Flutter packages: [http](https://pub.dev/packages/http), [html_unescape](https://pub.dev/packages/html_unescape), [carousel_slider](https://pub.dev/packages/carousel_slider), [dots_indicator](https://pub.dev/packages/dots_indicator)
+- IntelliJ IDEA 2023.2 (Community Edition)
+- Android Virtual Devices of Pixel 7 with API level 34
 
-A few resources to get you started if this is your first Flutter project:
+## Developers
+Albert E (vradnisntlong@gmail.com)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## App Preview
+| Images                                                         | Behaviors                                                                                                               |
+|----------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| <img src='readme_assets/home.png' width="300" alt="home.png"/> | - Top thumbnail is a carousel which auto slides horizontally.<br/>- Every section is a list which scrolls horizontally. |
