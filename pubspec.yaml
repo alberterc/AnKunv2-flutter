@@ -39,6 +39,7 @@ dependencies:
   html_unescape: ^2.0.0
   carousel_slider: ^4.2.1
   dots_indicator: ^3.0.0
+  html: ^0.15.4
 
 dev_dependencies:
   flutter_test:

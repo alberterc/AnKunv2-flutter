@@ -1,29 +1,66 @@
+import 'package:ankunv2_flutter/data/api_services.dart';
 import 'package:flutter/material.dart';
 import 'package:ankunv2_flutter/constants.dart';
 
-class SeasonScreen extends StatelessWidget {
+class SeasonScreen extends StatefulWidget {
   const SeasonScreen({super.key});
+
+  @override
+  State<SeasonScreen> createState() => SeasonScreenState();
+}
+class SeasonScreenState extends State<SeasonScreen> {
+  var currSeason = '';
+  var currPage = '1';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
-        child: Column(
-          children: [
-            SizedBox(
-              height: AppBar().preferredSize.height,
-            ),
-            const Column(
-              children: [
-                SeasonDropdownMenu(),
-                SizedBox(height: 14),
-                ChangePageMenu()
-              ],
-            ),
-            const SizedBox(height: 14,),
-            const Flexible(child: GridList())
-          ],
+        child: FutureBuilder<List> (
+          future: ApiService.getSeasons(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              if (currSeason == '') {
+                currSeason = snapshot.data!.first;
+              }
+              return Column(
+                  children: [
+                    SizedBox(
+                      height: AppBar().preferredSize.height,
+                    ),
+                    Column(
+                      children: [
+                        SeasonDropdownMenu(seasons: snapshot.data!, onSelectItem: (String value) {
+                          if (currSeason != value) {
+                            setState(() {
+                              currSeason = value;
+                              currPage = '1';
+                            });
+                          }
+                        }),
+                        const SizedBox(height: 14),
+                        ChangePageMenu(pageNum: int.parse(currPage), onPageChange: (String value) {
+                          if (currPage != value) {
+                            setState(() {
+                              currPage = value;
+                            });
+                          }
+                        }),
+                      ],
+                    ),
+                    const SizedBox(height: 14,),
+                    Flexible(child: GridList(currSeason: currSeason, currPage: currPage))
+                  ],
+              );
+            }
+            else if (snapshot.hasError) {
+              Constants.scaffoldMessageToast(context, Text(snapshot.error.toString()));
+            }
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          },
         ),
       )
     );
@@ -31,16 +68,14 @@ class SeasonScreen extends StatelessWidget {
 }
 
 class SeasonDropdownMenu extends StatefulWidget {
-  const SeasonDropdownMenu({super.key});
+  final List seasons;
+  final ValueChanged<String> onSelectItem;
+  const SeasonDropdownMenu({required this.seasons, required this.onSelectItem, super.key});
 
   @override
   State<SeasonDropdownMenu> createState() => SeasonDropdownMenuState();
 }
-final List<String> list = <String>['Summer', 'Winter'];
 class SeasonDropdownMenuState extends State<SeasonDropdownMenu> {
-  final TextEditingController seasonController = TextEditingController();
-  String selectedSeason = list.first;
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -48,7 +83,7 @@ class SeasonDropdownMenuState extends State<SeasonDropdownMenu> {
         height: 60,
         child: DropdownButtonFormField<String>(
           isExpanded: true,
-          value: selectedSeason,
+          value: widget.seasons.first,
           borderRadius: Constants.textFieldBorderRadius,
           decoration: const InputDecoration(
               border: OutlineInputBorder(
@@ -57,14 +92,12 @@ class SeasonDropdownMenuState extends State<SeasonDropdownMenu> {
               labelText: 'Season'
           ),
           onChanged: (String? value) {
-            setState(() {
-              selectedSeason = value!;
-            });
+            widget.onSelectItem(value!);
           },
-          items: list.map<DropdownMenuItem<String>>((String label) {
-            return DropdownMenuItem<String>(
-              value: label,
-              child: Text(label),
+          items: widget.seasons.map((e) {
+            return DropdownMenuItem(
+              value: e.toString(),
+              child: Text(e.toString()),
             );
           }).toList(),
         )
@@ -73,33 +106,38 @@ class SeasonDropdownMenuState extends State<SeasonDropdownMenu> {
 }
 
 class ChangePageMenu extends StatefulWidget {
-  const ChangePageMenu({super.key});
+  final ValueChanged<String> onPageChange;
+  final int pageNum;
+  const ChangePageMenu({required this.pageNum, required this. onPageChange, super.key});
 
   @override
   ChangePageMenuState createState() => ChangePageMenuState();
 }
 class ChangePageMenuState extends State<ChangePageMenu> {
-  int pageNum = 1;
-
-  void incrementPageNum() {
+  void incrementPageNum(int pageNum) {
     setState(() {
       pageNum++;
     });
+    widget.onPageChange(pageNum.toString());
   }
 
-  void decrementPageNum() {
+  void decrementPageNum(int pageNum) {
     setState(() {
       if (pageNum > 1) { pageNum--; }
     });
+    widget.onPageChange(pageNum.toString());
   }
 
   @override
   Widget build(BuildContext context) {
+    int pageNum = widget.pageNum;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         ElevatedButton(
-          onPressed: pageNum > 1 ? decrementPageNum : null,
+          onPressed: pageNum > 1 ? () {
+            decrementPageNum(pageNum);
+          } : null,
           style: ButtonStyle(
               backgroundColor: MaterialStateProperty.resolveWith((states) {
                 if (states.contains(MaterialState.disabled)) {
@@ -121,7 +159,9 @@ class ChangePageMenuState extends State<ChangePageMenu> {
           width: 40,
         ),
         ElevatedButton(
-          onPressed: incrementPageNum,
+          onPressed: () {
+            incrementPageNum(pageNum);
+          },
           style: ButtonStyle(
               backgroundColor: MaterialStateProperty.resolveWith((states) {
                 if (states.contains(MaterialState.disabled)) {
@@ -140,7 +180,9 @@ class ChangePageMenuState extends State<ChangePageMenu> {
   }}
 
 class GridList extends StatefulWidget {
-  const GridList ({super.key});
+  final String currSeason;
+  final String currPage;
+  const GridList ({required this.currSeason, super.key, required this.currPage});
 
   @override
   GridListState createState() => GridListState();
@@ -148,55 +190,103 @@ class GridList extends StatefulWidget {
 class GridListState extends State<GridList> {
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      padding: EdgeInsets.zero,
-      itemCount: 7,
-      shrinkWrap: true,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 9/13),
-      itemBuilder: (_, index) {
-        return Card(
-          elevation: 0,
-          semanticContainer: true,
-          clipBehavior: Clip.antiAliasWithSaveLayer,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20.0),
-          ),
-          child: Stack(
-            children: [
-              Container(
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(
-                        'https://placehold.co/200x100/png'),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    gradient: LinearGradient(
-                      colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
-                      stops: const [0, 1],
-                      begin: Alignment.center,
-                      end: Alignment.bottomCenter,
-                    )
-                ),
-              ),
-              Container(
-                alignment: Alignment.bottomLeft,
-                padding: const EdgeInsets.symmetric(
-                    vertical: 10, horizontal: 10),
-                child: const Text(
-                  'This is an example of a long title text on top of an image',
-                  style: Constants.primarySmallTextStyle,
-                ),
-              )
-            ],
-          ),
+    var selectedSeason = widget.currSeason.toLowerCase().replaceAll(' ', '-');
+    return FutureBuilder<List> (
+      future: ApiService.getSearchList(season: selectedSeason, page: widget.currPage),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasData) {
+            return GridView.builder(
+              padding: EdgeInsets.zero,
+              itemCount: snapshot.data!.length,
+              shrinkWrap: true,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 9/13),
+              itemBuilder: (_, index) {
+                return ThumbnailCard(dataImage: snapshot.data![index][2], dataText: snapshot.data![index][0], dataIsDub: snapshot.data![index][3]);
+              },
+            );
+          }
+          else if (snapshot.hasError) {
+            Constants.scaffoldMessageToast(context, Text(snapshot.error.toString()));
+          }
+        }
+        return const Center(
+          child: CircularProgressIndicator(),
         );
       },
     );
   }
+}
 
+class ThumbnailCard extends StatelessWidget {
+  final String dataImage;
+  final String dataText;
+  final int dataIsDub;
+  const ThumbnailCard({required this.dataImage, required this.dataText, required this.dataIsDub, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+        elevation: 0,
+        semanticContainer: true,
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        child: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: NetworkImage(
+                      dataImage),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  gradient: LinearGradient(
+                    colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
+                    stops: const [0, 1],
+                    begin: Alignment.center,
+                    end: Alignment.bottomCenter,
+                  )
+              ),
+            ),
+            dataIsDub == 0 ? Container() : Container(
+                alignment: Alignment.topRight,
+                margin: const EdgeInsets.fromLTRB(0, 7, 7, 0),
+                child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+                      child: Text(
+                        'DUB',
+                        style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white
+                        ),
+                      ),
+                    )
+                )
+            ),
+            Container(
+              alignment: Alignment.bottomLeft,
+              padding: const EdgeInsets.symmetric(
+                  vertical: 10, horizontal: 10),
+              child: Text(
+                dataText,
+                style: Constants.primarySmallTextStyle,
+              ),
+            )
+          ],
+        )
+    );
+  }
 }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:html_unescape/html_unescape_small.dart';
 import 'package:http/http.dart' as http;
+import 'package:html/parser.dart';
 import 'package:ankunv2_flutter/constants.dart';
 
 class ApiService {
@@ -48,6 +49,27 @@ class ApiService {
         final sliderListJSON = json.decode(HtmlUnescape().convert(utf8.decode(responseBodyBytes)));
         // JSON response [[ID, TITLE, THUMBNAIL]]
         return sliderListJSON;
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+    return [];
+  }
+
+  static Future<List<String>> getSeasons() async {
+    const seasonEndpointUrl = '/seasons';
+    final url = Uri.parse(Constants.apiBaseUrl + seasonEndpointUrl);
+    try {
+      var response = await http.get(url);
+      if (response.statusCode == 200) {
+        final responseBodyBytes = response.bodyBytes;
+        final htmlDocument = parse(HtmlUnescape().convert(utf8.decode(responseBodyBytes)));
+        final seasonDocumentList = htmlDocument.querySelector('ul.taxindex')!.querySelectorAll('span.name');
+        List<String> seasonList = [];
+        seasonDocumentList.map((e) => e.innerHtml).forEach((element) {
+          seasonList.add(element);
+        });
+        return seasonList;
       }
     } catch (e) {
       throw Exception(e.toString());
