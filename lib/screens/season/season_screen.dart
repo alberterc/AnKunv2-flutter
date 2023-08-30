@@ -108,7 +108,7 @@ class SeasonDropdownMenuState extends State<SeasonDropdownMenu> {
 class ChangePageMenu extends StatefulWidget {
   final ValueChanged<String> onPageChange;
   final int pageNum;
-  const ChangePageMenu({required this.pageNum, required this. onPageChange, super.key});
+  const ChangePageMenu({required this.pageNum, required this.onPageChange, super.key});
 
   @override
   ChangePageMenuState createState() => ChangePageMenuState();
