@@ -1,6 +1,7 @@
 import 'package:ankunv2_flutter/data/api_services.dart';
 import 'package:flutter/material.dart';
 import 'package:ankunv2_flutter/constants.dart';
+import 'package:ankunv2_flutter/screens/details/details_screen.dart';
 
 class SeasonScreen extends StatefulWidget {
   const SeasonScreen({super.key});
@@ -202,7 +203,7 @@ class GridListState extends State<GridList> {
               shrinkWrap: true,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 9/13),
               itemBuilder: (_, index) {
-                return ThumbnailCard(dataImage: snapshot.data![index][2], dataText: snapshot.data![index][0], dataIsDub: snapshot.data![index][3]);
+                return ThumbnailCard(dataId: snapshot.data![index][1], dataImage: snapshot.data![index][2], dataText: snapshot.data![index][0], dataIsDub: snapshot.data![index][3]);
               },
             );
           }
@@ -222,71 +223,77 @@ class ThumbnailCard extends StatelessWidget {
   final String dataImage;
   final String dataText;
   final int dataIsDub;
-  const ThumbnailCard({required this.dataImage, required this.dataText, required this.dataIsDub, super.key});
+  final int dataId;
+  const ThumbnailCard({required this.dataId, required this.dataImage, required this.dataText, required this.dataIsDub, super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-        elevation: 0,
-        semanticContainer: true,
-        clipBehavior: Clip.antiAliasWithSaveLayer,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.0),
-        ),
-        child: Stack(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(
-                      dataImage),
-                  fit: BoxFit.cover,
+    return InkWell(
+      child: Card(
+          elevation: 0,
+          semanticContainer: true,
+          clipBehavior: Clip.antiAliasWithSaveLayer,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          child: Stack(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage(
+                        dataImage),
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  gradient: LinearGradient(
-                    colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
-                    stops: const [0, 1],
-                    begin: Alignment.center,
-                    end: Alignment.bottomCenter,
+              Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    gradient: LinearGradient(
+                      colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
+                      stops: const [0, 1],
+                      begin: Alignment.center,
+                      end: Alignment.bottomCenter,
+                    )
+                ),
+              ),
+              dataIsDub == 0 ? Container() : Container(
+                  alignment: Alignment.topRight,
+                  margin: const EdgeInsets.fromLTRB(0, 7, 7, 0),
+                  child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+                        child: Text(
+                          'DUB',
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white
+                          ),
+                        ),
+                      )
                   )
               ),
-            ),
-            dataIsDub == 0 ? Container() : Container(
-                alignment: Alignment.topRight,
-                margin: const EdgeInsets.fromLTRB(0, 7, 7, 0),
-                child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 2, horizontal: 5),
-                      child: Text(
-                        'DUB',
-                        style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white
-                        ),
-                      ),
-                    )
-                )
-            ),
-            Container(
-              alignment: Alignment.bottomLeft,
-              padding: const EdgeInsets.symmetric(
-                  vertical: 10, horizontal: 10),
-              child: Text(
-                dataText,
-                style: Constants.primarySmallTextStyle,
-              ),
-            )
-          ],
-        )
+              Container(
+                alignment: Alignment.bottomLeft,
+                padding: const EdgeInsets.symmetric(
+                    vertical: 10, horizontal: 10),
+                child: Text(
+                  dataText,
+                  style: Constants.primarySmallTextStyle,
+                ),
+              )
+            ],
+          )
+      ),
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => DetailsScreen(dataId: dataId)));
+      }
     );
   }
 }
