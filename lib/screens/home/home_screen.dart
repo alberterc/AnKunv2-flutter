@@ -301,6 +301,9 @@ class SmallThumbnail extends StatelessWidget {
     return SizedBox(
       width: 150,
       child: InkWell(
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => DetailsScreen(dataId: dataId)));
+        },
         child: Card(
             elevation: 0,
             semanticContainer: true,
@@ -363,9 +366,6 @@ class SmallThumbnail extends StatelessWidget {
               ],
             )
         ),
-        onTap: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => DetailsScreen(dataId: dataId)));
-        },
       )
     );
   }
