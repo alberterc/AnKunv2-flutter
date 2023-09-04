@@ -29,8 +29,9 @@ class Constants {
   };
 
   static void scaffoldMessageToast(BuildContext context, Widget widget) {
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: widget)
-    );
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(content: widget)
+    // );
+    widget;
   }
 }
