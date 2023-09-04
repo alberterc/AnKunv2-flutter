@@ -1,4 +1,5 @@
 import 'package:ankunv2_flutter/data/api_services.dart';
+import 'package:ankunv2_flutter/screens/player/video_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:ankunv2_flutter/constants.dart';
 
@@ -273,18 +274,28 @@ class Description extends StatelessWidget {
               children: List<Widget>.generate(
                   dataEpisodes.length,
                       (index) {
-                    return Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: Colors.grey)
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                        child: Text(
-                          'Episode ${dataEpisodes[index][2].toString()}',
-                          style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.blue
+                    return InkWell(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => VideoScreen(
+                            episodeId: dataEpisodes[index][1],
+                            episodeNum: dataEpisodes[index][2],
+                            itemName: dataTitle,
+                          )
+                        ));
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(color: Colors.grey)
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                          child: Text(
+                            'Episode ${dataEpisodes[index][2].toString()}',
+                            style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.blue
+                            ),
                           ),
                         ),
                       ),
