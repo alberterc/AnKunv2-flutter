@@ -149,9 +149,9 @@ class ApiService {
     return [];
   }
 
-  static Future<List>  getItemEpisodes({int id = -1}) async {
+  static Future<List> getItemEpisodes({int id = -1}) async {
     if (id !=- 1) {
-      var itemEpisodesEndpointUrl = '/public-api/episodes.php?id=$id';
+      var itemEpisodesEndpointUrl = '/public-api/episodes.php?id=${id.toString()}';
       final url = Uri.parse(Constants.apiBaseUrl + itemEpisodesEndpointUrl);
       try {
         var response = await http.get(url);
