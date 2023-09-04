@@ -40,6 +40,8 @@ dependencies:
   carousel_slider: ^4.2.1
   dots_indicator: ^3.0.0
   html: ^0.15.4
+  collection: ^1.17.1
+  better_player: ^0.0.67
 
 dev_dependencies:
   flutter_test:
