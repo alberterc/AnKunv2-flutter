@@ -3,6 +3,7 @@ import 'package:html_unescape/html_unescape_small.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart';
 import 'package:ankunv2_flutter/constants.dart';
+import 'package:collection/collection.dart';
 
 class ApiService {
   static Future<List> getRecentUpdatesList({String mode = 'sub', String page = '1'}) async {
@@ -167,5 +168,51 @@ class ApiService {
     }
 
     return [];
+  }
+
+  static Future<Map> getItemEpisodeUrls({int episodeId = -1}) async {
+    if (episodeId !=- 1) {
+      var itemEpisodeUrlsEndpointUrl = '/public-api/episode.php?id=${episodeId.toString()}';
+      final url = Uri.parse(Constants.apiBaseUrl + itemEpisodeUrlsEndpointUrl);
+      try {
+        var response = await http.get(url);
+        if (response.statusCode == 200) {
+          final responseBodyBytes = response.bodyBytes;
+          var episodeUrlsList = json.decode(HtmlUnescape().convert(utf8.decode(responseBodyBytes))) as List;
+          // [UNKNOWN, UNKNOWN, OFFICIAL SOURCES.., UNOFFICIAL SOURCES..]
+          // remove the first 2 indices
+          episodeUrlsList.removeAt(0);
+          episodeUrlsList.removeAt(0);
+          if (episodeUrlsList[0] == 'null') {
+            episodeUrlsList.removeAt(0);
+          }
+          // get and remove episode number from list
+          final episodeNum = episodeUrlsList[episodeUrlsList.length - 1];
+          episodeUrlsList.removeAt(episodeUrlsList.length - 1);
+
+          // convert into correct URL
+          episodeUrlsList.forEachIndexed((index, element) {
+            episodeUrlsList[index] = json.decode(element);
+          });
+
+          // convert into Map
+          var episodeUrlsMap = {};
+          if (episodeUrlsList.length == 1) {
+            episodeUrlsMap['un-sources'] = episodeUrlsList[0];
+          }
+          else if (episodeUrlsList.length == 2) {
+            episodeUrlsMap['of-sources'] = episodeUrlsList[0];
+            episodeUrlsMap['un-sources'] = episodeUrlsList[1];
+          }
+          episodeUrlsMap['episode-num'] = episodeNum;
+
+          return episodeUrlsMap;
+        }
+      } catch (e) {
+        throw Exception(e.toString());
+      }
+    }
+
+    return {};
   }
 }
