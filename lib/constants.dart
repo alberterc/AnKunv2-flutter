@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class Constants {
   static const Color darkestBlue = Color(0xff212c32);
@@ -33,5 +34,13 @@ class Constants {
     //     SnackBar(content: widget)
     // );
     widget;
+  }
+
+  static String getRelativeTimeFromEpoch(int epochTime) {
+    DateTime currDate = DateTime.now();
+    DateTime relativeEpochDate = DateTime.fromMillisecondsSinceEpoch(epochTime * 1000);
+    DateTime relativeTime = currDate.subtract(currDate.difference(relativeEpochDate));
+
+    return timeago.format(relativeTime);
   }
 }
