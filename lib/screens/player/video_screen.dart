@@ -4,10 +4,11 @@ import 'package:ankunv2_flutter/constants.dart';
 import 'package:ankunv2_flutter/screens/player/player.dart';
 
 class VideoScreen extends StatefulWidget {
-  const VideoScreen({super.key, required this.episodeId, required this.episodeNum, required this.itemName});
+  const VideoScreen({super.key, required this.episodeId, required this.episodeNum, required this.itemName, required this.dataEpisodes});
   final int episodeId;
   final int episodeNum;
   final String itemName;
+  final List dataEpisodes;
 
   @override
   State<VideoScreen> createState() => VideoScreenState();
@@ -17,7 +18,15 @@ class VideoScreenState extends State<VideoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var dataEpisodes = widget.dataEpisodes;
+    var dataTitle = widget.itemName;
+    var nextEpisode = dataEpisodes.length - widget.episodeNum - 1;
+    var prevEpisode = dataEpisodes.length - widget.episodeNum + 1;
+
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Video Player'),
+      ),
       body: FutureBuilder<Map> (
         future: ApiService.getItemEpisodeUrls(episodeId: widget.episodeId),
         builder: (context, snapshot) {
@@ -27,8 +36,9 @@ class VideoScreenState extends State<VideoScreen> {
             currSource = urls['VidCDN-embed'];
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                const SizedBox(height: 15,),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Column(
@@ -69,7 +79,16 @@ class VideoScreenState extends State<VideoScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       ElevatedButton(
-                        onPressed: widget.episodeNum > 1 ? () {} : null,
+                        onPressed: widget.episodeNum > 1 ? () {
+                          Navigator.pop(context);
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => VideoScreen(
+                              episodeId: dataEpisodes[prevEpisode][1],
+                              episodeNum: dataEpisodes[prevEpisode][2],
+                              itemName: dataTitle,
+                              dataEpisodes: dataEpisodes,
+                            )
+                          ));
+                        } : null,
                         style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.resolveWith((states) {
                               if (states.contains(MaterialState.disabled)) {
@@ -84,7 +103,16 @@ class VideoScreenState extends State<VideoScreen> {
                         child: Text('Previous', style: widget.episodeNum > 1 ? Constants.primaryTextStyleClickable : null),
                       ),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: nextEpisode >= 0 ? () {
+                          Navigator.pop(context);
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => VideoScreen(
+                              episodeId: dataEpisodes[nextEpisode][1],
+                              episodeNum: dataEpisodes[nextEpisode][2],
+                              itemName: dataTitle,
+                              dataEpisodes: dataEpisodes,
+                            )
+                          ));
+                        } : null,
                         style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.resolveWith((states) {
                               if (states.contains(MaterialState.disabled)) {
@@ -96,7 +124,78 @@ class VideoScreenState extends State<VideoScreen> {
                               return null;
                             })
                         ),
-                        child: const Text('Next', style: Constants.primaryTextStyleClickable),
+                        child: Text('Next', style: nextEpisode >= 0 ? Constants.primaryTextStyleClickable : null),
+                      )
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20,),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: [
+                      const Text(
+                        'Episodes',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white
+                        ),
+                      ),
+                      const SizedBox(height: 5,),
+                      SizedBox(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            child: Wrap(
+                              spacing: 7,
+                              runSpacing: 10,
+                              children: List<Widget>.generate(
+                                  dataEpisodes.length,
+                                      (index) {
+                                    return InkWell(
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => VideoScreen(
+                                            episodeId: dataEpisodes[index][1],
+                                            episodeNum: dataEpisodes[index][2],
+                                            itemName: dataTitle,
+                                            dataEpisodes: dataEpisodes,
+                                          )
+                                        ));
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(14),
+                                            border: Border.all(color: Colors.grey)
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Episode ${dataEpisodes[index][2].toString()}',
+                                                style: const TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.blue
+                                                ),
+                                              ),
+                                              Text(
+                                                Constants.getRelativeTimeFromEpoch(dataEpisodes[index][3]),
+                                                style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.grey
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                              ).toList(),
+                            ),
+                          )
                       )
                     ],
                   ),
