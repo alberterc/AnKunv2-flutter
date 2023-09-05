@@ -7,7 +7,7 @@ class FavoritesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
-        child: Text('Coming Soon', style: TextStyle(fontSize: 24, color: Colors.grey)),
+        child: Text('Not Available', style: TextStyle(fontSize: 24, color: Colors.grey)),
       ),
     );
   }
