@@ -1,3 +1,5 @@
+import 'package:ankunv2_flutter/screens/home/most_popular_screen.dart';
+import 'package:ankunv2_flutter/screens/home/recent_updates_screen.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -36,13 +38,18 @@ class HomeScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Recent updates list (mode: sub, page: 1)
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(14, 10, 14, 14),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(14, 10, 14, 14),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Recent Updates (Sub)', style: Constants.primaryTextStyle),
-                      Text('Show All', style: Constants.primaryTextStyleClickable)
+                      const Text('Recent Updates (Sub)', style: Constants.primaryTextStyle),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const RecentUpdatesScreen(title: 'Recent Updates (Sub)', isDub: 'sub',)));
+                        },
+                        child: const Text('Show All', style: Constants.primaryTextStyleClickable,),
+                      )
                     ],
                   ),
                 ),
@@ -76,13 +83,18 @@ class HomeScreen extends StatelessWidget {
                 ),
 
                 // Recent updates list (mode: dub, page: 1)
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(14, 20, 14, 14),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(14, 20, 14, 14),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Recent Updates (Dub)', style: Constants.primaryTextStyle),
-                      Text('Show All', style: Constants.primaryTextStyleClickable)
+                      const Text('Recent Updates (Dub)', style: Constants.primaryTextStyle),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const RecentUpdatesScreen(title: 'Recent Updates (Dub)', isDub: 'dub',)));
+                        },
+                        child: const Text('Show All', style: Constants.primaryTextStyleClickable,),
+                      )
                     ],
                   ),
                 ),
@@ -116,13 +128,18 @@ class HomeScreen extends StatelessWidget {
                 ),
 
                 // Most Popular This Week
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(14, 20, 14, 14),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(14, 20, 14, 14),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Most Popular This Week', style: Constants.primaryTextStyle),
-                      Text('Show All', style: Constants.primaryTextStyleClickable)
+                      const Text('Most Popular This Week', style: Constants.primaryTextStyle),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const MostPopularScreen(title: 'Most Popular This Week', sort: 'popular-week',)));
+                        },
+                        child: const Text('Show All', style: Constants.primaryTextStyleClickable,),
+                      )
                     ],
                   ),
                 ),
@@ -156,13 +173,18 @@ class HomeScreen extends StatelessWidget {
                 ),
 
                 // Most Popular This Year
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(14, 20, 14, 14),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(14, 20, 14, 14),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Most Popular This Year', style: Constants.primaryTextStyle),
-                      Text('Show All', style: Constants.primaryTextStyleClickable)
+                      const Text('Most Popular This Year', style: Constants.primaryTextStyle),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const MostPopularScreen(title: 'Most Popular This Year', sort: 'popular-year',)));
+                        },
+                        child: const Text('Show All', style: Constants.primaryTextStyleClickable,),
+                      )
                     ],
                   ),
                 ),
