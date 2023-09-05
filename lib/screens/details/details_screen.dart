@@ -280,6 +280,7 @@ class Description extends StatelessWidget {
                             episodeId: dataEpisodes[index][1],
                             episodeNum: dataEpisodes[index][2],
                             itemName: dataTitle,
+                            dataEpisodes: dataEpisodes,
                           )
                         ));
                       },
@@ -290,12 +291,24 @@ class Description extends StatelessWidget {
                         ),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                          child: Text(
-                            'Episode ${dataEpisodes[index][2].toString()}',
-                            style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.blue
-                            ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Episode ${dataEpisodes[index][2].toString()}',
+                                style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.blue
+                                ),
+                              ),
+                              Text(
+                                Constants.getRelativeTimeFromEpoch(dataEpisodes[index][3]),
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey
+                                ),
+                              )
+                            ],
                           ),
                         ),
                       ),
