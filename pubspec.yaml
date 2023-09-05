@@ -42,6 +42,7 @@ dependencies:
   html: ^0.15.4
   collection: ^1.17.1
   better_player: ^0.0.67
+  timeago: ^3.5.0
 
 dev_dependencies:
   flutter_test:
