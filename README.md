@@ -15,7 +15,7 @@ Updated from [AnKunv2](https://github.com/RadXGH/AnKunv2) that was built using J
 - Android Virtual Devices of Pixel 7 with API level 34
 
 ## Developers
-Albert E (vradnisntlong@gmail.com)
+Albert E (albertenrico.5@gmail.com)
 
 ## App Preview
 | Images                                                                                           | Behaviors                                                                                                                                                               |
