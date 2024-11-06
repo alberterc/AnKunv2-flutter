@@ -1,5 +1,7 @@
 # AnKunv2 in Flutter
 
+***The API used is not maintained by me and may cause issues.***
+
 A clone of AnkunV2 with Flutter.
 
 Updated from [AnKunv2](https://github.com/RadXGH/AnKunv2) that was built using Jetpack Compose. Also, removed some features to reduce performance impact.
